@@ -1,14 +1,38 @@
 # Git Hooks
 
-These hooks are intended to increase the readability and consistency of the code committed to this repository.
+These hooks are intended to increase the readability and consistency of the code committed to this repository. We follow the [PEP8](https://www.python.org/dev/peps/pep-0008/) style standards for python.
 
 ## Initial Setup
 
-After pulling the repository for the first time:
+1) Clone this repo
+
 ```shell
-sudo pip install -r requirements.txt
-cd ../.git/hooks/ && ln -s ../../git/pre-commit.py pre-commit
+git clone git@github.com:ftb-dataengineering/code-quality.git
 ```
+
+2) Install prerequisites
+
+```shell
+sudo pip install -r code-quality/git/requirements.txt
+```
+
+## Setting up a pre-commit hook
+
+1) Add code-quality repo as submodule
+
+From the top level of your repo:
+
+```shell
+git submodule add git@github.com:ftb-dataengineering/code-quality.git
+```
+
+2) Run setup script
+IMPORTANT: run this script from the top-level of your repo (the repo you want to add the pre-commit hook to)!
+
+```shell
+sudo code-quality/git/setup_precommit_hook.sh
+```
+
 
 ## Pylint Usage
 
@@ -19,3 +43,9 @@ pylint sample_script.py
 ```
 
 Settings for Pylint are stored in `pylintrc` and relevant changes are welcome.
+
+
+## ToDo
+
+- Make setup script more robust to directory structure
+
