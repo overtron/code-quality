@@ -304,7 +304,8 @@ def run_pylint(git_root, file_path):
     report = None
 
     try:
-        pylint_out = system('pylint', '--rcfile=%s' % os.path.join(git_root, 'git/pylintrc'), file_path)
+        full_path = os.path.dirname(os.path.realpath(__file__))
+        pylint_out = system('pylint', '--rcfile=%s' % os.path.join(full_path, 'pylintrc'), file_path)
         pylint_out = pylint_out.split('\n')
 
         report, code_score = get_pylint_report(pylint_out)
