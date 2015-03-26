@@ -2,19 +2,6 @@
 
 These hooks are intended to increase the readability and consistency of the code committed to this repository. We follow the [PEP8](https://www.python.org/dev/peps/pep-0008/) style standards for python.
 
-## Initial Setup
-
-1) Clone this repo
-
-```shell
-git clone git@github.com:ftb-dataengineering/code-quality.git
-```
-
-2) Install prerequisites
-
-```shell
-sudo pip install -r code-quality/git/requirements.txt
-```
 
 ## Setting up a pre-commit hook
 
@@ -24,6 +11,12 @@ From the top level of your repo:
 
 ```shell
 git submodule add git@github.com:ftb-dataengineering/code-quality.git
+```
+
+Note: This assumes you have ssh keys setup, if this does not work, you can try the following:
+
+```shell
+git submodule add https://github.com/ftb-dataengineering/code-quality.git
 ```
 
 2) Run setup script
