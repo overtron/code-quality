@@ -16,6 +16,7 @@ _PYLINT_WARN = re.compile(r"^W:")
 _PYLINT_ERROR = re.compile(r"^(E|F):")
 _PYLINT_CONVENTION = re.compile(r"^(C|R):")
 _PYLINT_LOCATION = re.compile(r"(C|R|W|E|F):\s*(\d+),\s*(\d+): ")
+_PYLINT_LENGTH = re.compile(r"\(line-too-long\)$")
 _PYLINT_SCORE = re.compile(r"Your code has been rated at ([\d\.]+)/10")
 
 GIT_DIFF_REGEXES = [
@@ -193,6 +194,8 @@ def get_pylint_type(line):
     if _PYLINT_WARN.search(line):
         return WARNING
     elif _PYLINT_ERROR.search(line):
+        return ERROR
+    elif _PYLINT_LENGTH.search(line):
         return ERROR
     if _PYLINT_CONVENTION.search(line):
         return CONVENTION
