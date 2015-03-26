@@ -300,12 +300,12 @@ def get_pylint_report(pylint_out):
     return '\n'.join(report), code_score
 
 
-def run_pylint(git_root, file_path):
+def run_pylint(file_path):
     report = None
 
     try:
         full_path = os.path.dirname(os.path.realpath(__file__))
-        pylint_out = system('pylint', '--rcfile=%s' % os.path.join(full_path, 'pylintrc'), file_path)
+        pylint_out = system('pylint', '--rcfile={}'.format(os.path.join(full_path, 'pylintrc')), file_path)
         pylint_out = pylint_out.split('\n')
 
         report, code_score = get_pylint_report(pylint_out)
@@ -357,7 +357,7 @@ def main():
         actual_file = os.path.join(git_root, name)
 
         check_for_git_difftext(actual_file)
-        pylint_error, pylint_report = run_pylint(git_root, actual_file)
+        pylint_error, pylint_report = run_pylint(actual_file)
         pylint_errors += pylint_error
 
         if not os.path.exists(file_path):
