@@ -167,12 +167,14 @@ def step_descriptions(root, type):
 
 
 def summarize(name_errors_exist, name_errors, descriptions_missing_warning, notes_missing_error):
+    evaluation_passed = True
     print
     print
     print
     PARSER_LOGGER.info("============= SUMMARY ===============")
     if not name_errors_exist:
         PARSER_LOGGER.error(COLORIZER.red('Found {} name errors'.format(name_errors)))
+        evaluation_passed = False
     else:
         PARSER_LOGGER.info(COLORIZER.green("No Naming errors found"))
 
@@ -180,17 +182,18 @@ def summarize(name_errors_exist, name_errors, descriptions_missing_warning, note
         PARSER_LOGGER.info(COLORIZER.green('Step descriptions check passed'))
     else:
         PARSER_LOGGER.warning(COLORIZER.yellow('Step descriptions check failed'))
+        evaluation_passed = False
 
     if notes_missing_error:
         PARSER_LOGGER.info(COLORIZER.green('Notes check passed'))
     else:
         PARSER_LOGGER.error(COLORIZER.red('Notes check failed'))
+        evaluation_passed = False
 
-    return
+    return evaluation_passed
 
 
 def kettle_evaluate(root):
-    evaluation_passed = True
     type = root.tag
 
     PARSER_LOGGER.info('Examining {}'.format(type))
@@ -203,9 +206,7 @@ def kettle_evaluate(root):
     # Examine if there is a note
     notes_missing_error = step_notes(root, type)
 
-    summarize(name_errors_exist, name_errors, descriptions_missing_warning, notes_missing_error)
-
-    return evaluation_passed
+    return summarize(name_errors_exist, name_errors, descriptions_missing_warning, notes_missing_error)
 
 # --------------------------------------------------------------------------------------------------
 
