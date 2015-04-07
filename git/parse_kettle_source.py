@@ -140,6 +140,7 @@ def evaluate_descriptions(entries):
     for entrydesc in entries:
         if not entrydesc.text:
             step_descriptions_passed = False
+            break
 
     return step_descriptions_passed
 
