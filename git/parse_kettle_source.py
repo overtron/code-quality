@@ -13,6 +13,49 @@ import argparse
 import xml.etree.ElementTree as ET
 from names_regex import DEFAULT_NAMES as DEFAULT_NAMES
 
+
+# --------------------------------------------------------------------------------------------------
+
+
+class PrettyColors(object):
+    colors = {
+        'red': '\033[1;31m',
+        'green': '\033[1;32m',
+        'yellow': '\033[1;33m',
+        'cyan': '\033[0;36m',
+        'off': '\033[0m'
+    }
+
+    def colorize(self, text, color):
+        return self.colors[color] + text + self.colors['off']
+
+    def red(self, text):
+        return self.colorize(text, 'red')
+
+    def cyan(self, text):
+        return self.colorize(text, 'cyan')
+
+    def green(self, text):
+        return self.colorize(text, 'green')
+
+    def yellow(self, text):
+        return self.colorize(text, 'yellow')
+
+    def format(self, text, issue_type):
+        """
+        :param text: the text you want to print
+        :param issue_type: the type of issue (warning, error, convention)
+        :return: the colored text
+        """
+        if issue_type == WARNING:
+            return self.yellow(text)
+        elif issue_type == ERROR:
+            return self.red(text)
+        elif issue_type == CONVENTION:
+            return self.cyan(text)
+        else:
+            return text
+
 # --------------------------------------------------------------------------------------------------
 
 PARSER_LOGGER = logging.getLogger(__name__)
@@ -21,7 +64,7 @@ logging.addLevelName(logging.ERROR, "\033[1;41m%s\033[1;0m" % logging.getLevelNa
 # --------------------------------------------------------------------------------------------------
 
 
-def step_notes(root):
+def step_notes(root, type):
     """
     Find all notes in the root element of kettle file
     If there are no notes, fail
@@ -58,18 +101,19 @@ def evaluate_entries(entries):
 # --------------------------------------------------------------------------------------------------
 
 
-def step_names(root):
+def step_names(root, type):
     """
     Find all entries in root element
     check if they have non default names
     :param root:
     """
     PARSER_LOGGER.info('Checking Step Names')
-    type = root.tag
     if type == "job":
         entries = root.findall('./entries/entry/name')
     elif type == "transformation":
         entries = root.findall('./step/name')
+
+    PARSER_LOGGER.info('Found {} step(s) in the file'.format(len(entries)))
 
     step_names_passed = evaluate_entries(entries)
 
@@ -93,7 +137,7 @@ def evaluate_descriptions(entries):
 # --------------------------------------------------------------------------------------------------
 
 
-def step_descriptions(root):
+def step_descriptions(root, type):
     """
     Takes root element and finds descriptions
     If no descriptions exist for each entry - return False
@@ -101,7 +145,6 @@ def step_descriptions(root):
     :returntype boolean:
     """
     PARSER_LOGGER.info('Checking descriptions')
-    type = root.tag
     if type == "job":
         entries = root.findall('./entries/entry/description')
     else:
@@ -115,19 +158,28 @@ def step_descriptions(root):
 
 def kettle_evaluate(root):
     evaluation_passed = True
-    if step_names(root):
-        PARSER_LOGGER.info('Step names check passed')
-    else:
-        PARSER_LOGGER.error('Step names checks failed')
-    if step_descriptions(root):
-        PARSER_LOGGER.info('Step descriptions check passed')
-    else:
-        PARSER_LOGGER.error('Step descriptions check failed')
+    type = root.tag
+    colorizer = PrettyColors()
 
-    if step_notes(root):
-        PARSER_LOGGER.info('Notes check passed')
+    PARSER_LOGGER.info('Examining {}'.format(type))
+    warning_count = 0
+    # Examine if names are non-default
+    if step_names(root, type):
+        PARSER_LOGGER.info(colorizer.green('Step names check passed'))
     else:
-        PARSER_LOGGER.error('Notes check failed')
+        PARSER_LOGGER.error(colorizer.red('Step names checks failed'))
+
+    # Examine if descriptions for all steps are filled
+    if step_descriptions(root, type):
+        PARSER_LOGGER.info(colorizer.green('Step descriptions check passed'))
+    else:
+        PARSER_LOGGER.warning(colorizer.yellow('Step descriptions check failed'))
+
+    # Examine if there is a note
+    if step_notes(root, type):
+        PARSER_LOGGER.info(colorizer.green('Notes check passed'))
+    else:
+        PARSER_LOGGER.error(colorizer.red('Notes check failed'))
     return evaluation_passed
 
 # --------------------------------------------------------------------------------------------------
