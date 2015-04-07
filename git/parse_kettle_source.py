@@ -138,7 +138,7 @@ def evaluate_descriptions(entries):
     """
     step_descriptions_passed = True
     for entrydesc in entries:
-        if not entrydesc.text:
+        if not entrydesc.text.strip():
             step_descriptions_passed = False
             break
 
