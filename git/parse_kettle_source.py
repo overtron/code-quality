@@ -83,20 +83,27 @@ def step_notes(root, type):
 def evaluate_entries(entries):
     """
     If any name is the same as the default name return false
+    file type agnostic function
     :param entries:
+    :return step_names_passed, name_errors:
+    :type boolean, int:
     """
     step_names_passed = True
-    evaluated = False
+    name_errors = 0
     for entryname in entries:
         PARSER_LOGGER.info('Checking entry {}'.format(entryname.text))
+        evaluated = False
         for default_name in DEFAULT_NAMES:
             if re.findall(default_name, entryname.text):
+                PARSER_LOGGER.error(COLORIZER.red('Using default name: {}'.format(entryname.text)))
+                name_errors += 1
                 step_names_passed = False
                 evaluated = True
                 break
         if evaluated:
-            break
-    return step_names_passed
+            continue
+        PARSER_LOGGER.info(COLORIZER.green('Passed {}'.format(entryname.text)))
+    return step_names_passed, name_errors
 
 # --------------------------------------------------------------------------------------------------
 
@@ -106,6 +113,8 @@ def step_names(root, type):
     Find all entries in root element
     check if they have non default names
     :param root:
+    :return step_names_passed, name_errors:
+    :type boolean, int:
     """
     PARSER_LOGGER.info('Checking Step Names')
     if type == "job":
@@ -115,9 +124,9 @@ def step_names(root, type):
 
     PARSER_LOGGER.info('Found {} step(s) in the file'.format(len(entries)))
 
-    step_names_passed = evaluate_entries(entries)
+    step_names_passed, name_errors = evaluate_entries(entries)
 
-    return step_names_passed
+    return step_names_passed, name_errors
 
 # --------------------------------------------------------------------------------------------------
 
@@ -156,30 +165,45 @@ def step_descriptions(root, type):
 # --------------------------------------------------------------------------------------------------
 
 
+def summarize(name_errors_exist, name_errors, descriptions_missing_warning, notes_missing_error):
+    print
+    print
+    print
+    PARSER_LOGGER.info("============= SUMMARY ===============")
+    if not name_errors_exist:
+        PARSER_LOGGER.error(COLORIZER.red('Found {} name errors'.format(name_errors)))
+    else:
+        PARSER_LOGGER.info(COLORIZER.green("No Naming errors found"))
+
+    if descriptions_missing_warning:
+        PARSER_LOGGER.info(COLORIZER.green('Step descriptions check passed'))
+    else:
+        PARSER_LOGGER.warning(COLORIZER.yellow('Step descriptions check failed'))
+
+    if notes_missing_error:
+        PARSER_LOGGER.info(COLORIZER.green('Notes check passed'))
+    else:
+        PARSER_LOGGER.error(COLORIZER.red('Notes check failed'))
+
+    return
+
+
 def kettle_evaluate(root):
     evaluation_passed = True
     type = root.tag
-    colorizer = PrettyColors()
 
     PARSER_LOGGER.info('Examining {}'.format(type))
-    warning_count = 0
     # Examine if names are non-default
-    if step_names(root, type):
-        PARSER_LOGGER.info(colorizer.green('Step names check passed'))
-    else:
-        PARSER_LOGGER.error(colorizer.red('Step names checks failed'))
+    name_errors_exist, name_errors = step_names(root, type)
 
     # Examine if descriptions for all steps are filled
-    if step_descriptions(root, type):
-        PARSER_LOGGER.info(colorizer.green('Step descriptions check passed'))
-    else:
-        PARSER_LOGGER.warning(colorizer.yellow('Step descriptions check failed'))
+    descriptions_missing_warning = step_descriptions(root, type)
 
     # Examine if there is a note
-    if step_notes(root, type):
-        PARSER_LOGGER.info(colorizer.green('Notes check passed'))
-    else:
-        PARSER_LOGGER.error(colorizer.red('Notes check failed'))
+    notes_missing_error = step_notes(root, type)
+
+    summarize(name_errors_exist, name_errors, descriptions_missing_warning, notes_missing_error)
+
     return evaluation_passed
 
 # --------------------------------------------------------------------------------------------------
@@ -202,6 +226,7 @@ if __name__ == "__main__":
     CONSOLE_HANDLER.setLevel(logging.INFO)
     CONSOLE_HANDLER.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
     PARSER_LOGGER.addHandler(CONSOLE_HANDLER)
+    COLORIZER = PrettyColors()
 
     CL_ARGS = parse_command_line_args()
     FILENAME = CL_ARGS.filename
