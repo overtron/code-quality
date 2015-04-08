@@ -200,6 +200,11 @@ def summarize(step_names_passed, name_errors, descriptions_missing_warning, note
 
 
 def kettle_evaluate(filename):
+
+    print
+    print
+    print COLORIZER.green("kettle_parser: {}".format(filename))
+
     tree = ET.parse(filename)
     root = tree.getroot()
 
