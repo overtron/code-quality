@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import linecache
+import parse_kettle_source as kettle_parse
 
 _PEP_WARN = re.compile(r"\bW\d+\b")
 _PEP_ERROR = re.compile(r"\bE\d+\b")
@@ -324,41 +325,45 @@ def get_git_root_dir():
     return git_root.strip()
 
 
-def get_python_files(git_root, files):
+def get_python_kettle_files(git_root, files):
     re_py = re.compile('^#!.*python$')
 
-    py_files = []
+    py_kettle_files = []
     for file_name in files:
         base_file, file_ext = os.path.splitext(file_name)
-        if file_ext.lower() == '.py':
-            py_files.append(file_name)
+        if file_ext.lower() in ('.py', '.ktr', '.kjb'):
+            py_kettle_files.append(file_name)
         else:
             first_row = system('head', '-1', os.path.join(git_root, file_name))
             if re_py.search(first_row):
-                py_files.append(file_name)
+                py_kettle_files.append(file_name)
 
-    return py_files
+    return py_kettle_files
 
 
 def main():
     git_root = get_git_root_dir()
-    # modified = re.compile(r'^[AM]+\s+(?P<name>.*\.py)', re.MULTILINE)
     modified = re.compile(r'^[AM]+\s+(?P<name>.*)', re.MULTILINE)
 
     files = system('git', 'status', '--porcelain')
     files = modified.findall(files)
-    files = get_python_files(git_root, files)
+    files = get_python_kettle_files(git_root, files)
 
     tempdir = tempfile.mkdtemp()
-    pylint_errors = 0
+    pre_commit_errors = 0
     for name in files:
         filename = os.path.join(tempdir, name)
         file_path = os.path.dirname(filename)
         actual_file = os.path.join(git_root, name)
 
         check_for_git_difftext(actual_file)
-        pylint_error, pylint_report = run_pylint(actual_file)
-        pylint_errors += pylint_error
+        if actual_file.endswith('.ktr') or actual_file.endswith('.kjb'):
+            kettle_error_free = kettle_parse.kettle_evaluate(actual_file)
+            if not kettle_error_free:
+                pre_commit_errors = 1
+        else:
+            pylint_error, pylint_report = run_pylint(actual_file)
+            pre_commit_errors += pylint_error
 
         if not os.path.exists(file_path):
             os.makedirs(file_path)
@@ -366,12 +371,11 @@ def main():
         with file(filename, 'w') as fout:
             system('git', 'show', ':' + name, stdout=fout)
 
-    # output = system('pep8', '.', cwd=tempdir)
     shutil.rmtree(tempdir)
 
-    if pylint_errors > 0:
+    if pre_commit_errors > 0:
         print ' '.join(['\nYour commit did not go through,',
-                       'please fix these errors and then recommit'])
+                        'please fix these errors and then recommit'])
         sys.exit(1)
 
 
