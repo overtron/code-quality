@@ -13,6 +13,12 @@ import argparse
 import xml.etree.ElementTree as ET
 from names_regex import DEFAULT_NAMES as DEFAULT_NAMES
 
+PARSER_LOGGER = logging.getLogger()
+PARSER_LOGGER.setLevel(logging.INFO)
+CONSOLE_HANDLER = logging.StreamHandler(sys.stdout)
+CONSOLE_HANDLER.setLevel(logging.INFO)
+CONSOLE_HANDLER.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+PARSER_LOGGER.addHandler(CONSOLE_HANDLER)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -58,6 +64,7 @@ class PrettyColors(object):
 
 # --------------------------------------------------------------------------------------------------
 
+COLORIZER = PrettyColors()
 PARSER_LOGGER = logging.getLogger(__name__)
 logging.addLevelName(logging.ERROR, "\033[1;41m%s\033[1;0m" % logging.getLevelName(logging.ERROR))
 
@@ -182,7 +189,6 @@ def summarize(step_names_passed, name_errors, descriptions_missing_warning, note
         PARSER_LOGGER.info(COLORIZER.green('Step descriptions check passed'))
     else:
         PARSER_LOGGER.warning(COLORIZER.yellow('Step descriptions check failed'))
-        evaluation_passed = False
 
     if notes_missing_error:
         PARSER_LOGGER.info(COLORIZER.green('Notes check passed'))
@@ -193,7 +199,10 @@ def summarize(step_names_passed, name_errors, descriptions_missing_warning, note
     return evaluation_passed
 
 
-def kettle_evaluate(root):
+def kettle_evaluate(filename):
+    tree = ET.parse(filename)
+    root = tree.getroot()
+
     type = root.tag
 
     PARSER_LOGGER.info('Examining {}'.format(type))
@@ -222,16 +231,6 @@ def parse_command_line_args():
 
 if __name__ == "__main__":
 
-    PARSER_LOGGER = logging.getLogger()
-    PARSER_LOGGER.setLevel(logging.INFO)
-    CONSOLE_HANDLER = logging.StreamHandler(sys.stdout)
-    CONSOLE_HANDLER.setLevel(logging.INFO)
-    CONSOLE_HANDLER.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-    PARSER_LOGGER.addHandler(CONSOLE_HANDLER)
-    COLORIZER = PrettyColors()
-
     CL_ARGS = parse_command_line_args()
     FILENAME = CL_ARGS.filename
-    TREE = ET.parse(FILENAME)
-    ROOT = TREE.getroot()
-    kettle_evaluate(ROOT)
+    kettle_evaluate(FILENAME)
