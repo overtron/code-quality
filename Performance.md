@@ -33,29 +33,6 @@ newlist = [s.upper() for s in oldlist]
 iterator = (s.upper() for s in oldlist)
 ```
 
-### Avoiding dots...
-If you can't use `map` or a list comprehension you may be stuck with the loop. But we can eliminate the function references (`newlist.append` and `word.upper`) from being reevaluated each time through the loop:
-
-```python
-upper = str.upper
-newlist = []
-append = newlist.append
-for word in oldlist:
-  append(upper(word))
-```
-
-The final speedup available to us is the use of __local variables__ and the non-`map` version of the loop. If we cast the loop as a function, `append` and `upper` become local variables. Pythong accesses local variables much more efficiently than global variables:
-
-```python
-def func():
-  upper = str.upper
-  newlist = []
-  append = newlist.append
-  for word in oldlist:
-    append(upper(word))
-  return newlist
-```
-
 
 ## Initializing Dictionary Elements:<a name="dictionaries"></a>
 

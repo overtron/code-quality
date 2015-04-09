@@ -2,11 +2,12 @@
 
 This repository is focused on providing the information and tools necessary to write high quality Python and well documented [Kettle](http://community.pentaho.com/projects/data-integration/) Jobs & Transformations.
 
-Read more on Code Styling, [here](CodeStyling.md).
+* Read more on Code Styling, [here](CodeStyling.md).
+* Read more on Code Performance, [here](Performance.md).
 
 ## Setup
 
-To setup the tools in this repository, please refer to [git/README.md](https://github.com/ftb-dataengineering/code-quality/blob/master/git/README.md)
+To setup the tools in this repository, please refer to [git/README.md](git/README.md)
 
 
 ## Python Review Guidelines
