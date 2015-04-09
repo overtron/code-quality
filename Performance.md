@@ -124,3 +124,84 @@ doit2(list)
 print "%.3f" % (time.time()-t)
 >>> 0.204
 ```
+
+## Pythonic Idioms<a name="idioms"></a>
+
+### Tuples
+
+#### Swapping Variables
+
+```python
+# instead of
+temp = a
+a = b
+b = temp
+
+# use
+a, b = b, a
+```
+
+### Iterating over structured data
+
+```python
+#instead of
+points = [(1, 2), (3, 1), (4, 6)]
+for point in points:
+  x = point[0]
+  y = point[1]
+  # do something
+
+# use
+points = [(1, 2), (3, 1), (4, 6)]
+for x, y in points:
+  # do something
+```
+
+### Formatting
+
+Use string replacement or `.format()` syntax
+
+```python
+name = '%s %s' % ('Jesse', 'Adametz')  # string replacement
+greeting = 'Hi, my name is {}'.format(name) # .format()
+```
+
+## Loops and Sequences
+
+### Filtering a list
+
+Suppose you want the reflections of all points underneath the line `y = x`
+
+```python
+# instead of
+points = [(1, 2), (2, 1), (3, 5), (4, 2)]
+reflect_under = []
+for x, y in points:
+  if x < y:
+    reflect_under.append((y, x))
+
+# use
+points = [(1, 2), (2, 1), (3, 5), (4, 2)]
+reflect_under = [(y, x) for x, y in points if x < y]
+```
+
+### Iterating over a list
+
+Going backwards
+
+```python
+for datum in reversed(data):
+  # do something
+```
+
+You sometimes need acces to index AND the element:
+
+```python
+# instead of
+names = 'alice bob clarence dean'.split()
+for i in range(len(names)):
+  print 'Name {} is {}\n'.format(i, names[i])
+
+# use
+for i, name in enumerate(names):
+  print 'Name {} is {}\n'.format(i, name)

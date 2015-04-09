@@ -2,7 +2,7 @@
 
 This repository is focused on providing the information and tools necessary to write high quality Python and well documented [Kettle](http://community.pentaho.com/projects/data-integration/) Jobs & Transformations.
 
-Read more on Code Styling, [here](https://github.com/ftb-dataengineering/code-quality/blob/master/CodeStyling.md).
+Read more on Code Styling, [here](CodeStyling.md).
 
 ## Setup
 
@@ -13,19 +13,15 @@ To setup the tools in this repository, please refer to [git/README.md](https://g
 
 __Contents:__
 
-* [Minimum Expectations](#min_expectations)
-  * [Main](#main)
-  * [Comments](#comments)
-  * [Duplicate Code](#dupe_code)
+* [Main](#main)
+* [Comments](#comments)
+* [Duplicate Code](#dupe_code)
 * [Advanced Code Review](#adv_code_review)
 
-
-## Minimum Expectations<a name="min_expectations"></a>:
-
-The topics in this section are critical components of our code review; focusing on speed, modularity, and maintainability. Many of these concepts have been directly ported from [Python.org's Performance Tipcs](https://wiki.python.org/moin/PythonSpeed/PerformanceTips)
-
+The bullets outlined below are minimal suggestions of what to look for when embarking on code review. They are meant to be interpreted on a case-by-case basis specific to the code you are reviewing and should take in to account your best judgement.
 
 ### Main: should allow your script to be importable without execution<a name="main"></a>
+
 ```python
 def foo():
   ...
@@ -35,63 +31,57 @@ if __name__ == '__main__':
 ```
 
 
----
-
-
 ### Comments: should convey intent of code<a name="comments"></a>
 
+Comments about _why_ the developer did something unusual are the most critical comments to look for. Comments like; `MySQLdb returns long, typecasting to int first` helps the reader understand the developers decision. Additionally, to catch bugs during code review, it's important to know what the code is supposed to do. Thus, when reading, you can compare actuality and intent.
 
-__Docstrings:__ can be used as the first statement in any package, module, class or function.
-```python
-def foo_bar(param1, param2, param3=None):
-  """
-  Brief description of what this method is doing.
-  :param param1: some string
-  :param param2: some int
-  :param param3: some optional param
-  :return: thing returned by foo_bar
-  """
-```
+[Read more about Comment styling.](CodeStyling.md/#)
 
-According to [Google's Style Guide](https://google-styleguide.googlecode.com/svn/trunk/pyguide.html), a docstring should exist unless the following criteria are __all__ met:
 
-* not externally visible
-* very short
-* obvious
+### Input defense: handling and guarding against bad input<a name="input_defense"></a>
 
-__Block and inline comments:__
+There are two main things to look for:
 
-* should be used for "tricky" parts of the code.
-* _"If you're going to have to explain it at the next code review, you should comment it now."_
-* Complicated operations get a few lines of comments before the operations commence.
-* Non-obvious ones get comments at the end of the line.
+1. Confirm that input from the end user is scrubbed and encoded.
+* Confirm that functions are defended from bad inputs that come from external sources.
 
 ```python
-# Some lines describing what you're trying to do
-# This is different than describing the code
-# You should assume the person reading your code can read Python
-
-if i & (i - 1) == 0:  # true iff i is a power of 2
+# defense example
+def foo(int_param):
+  if not isinstance(int_param, int):
+    try:
+      int_param = int(int_param)
+    except ValueError:
+      return False
+  return True
 ```
 
+### Loops: should be concise and performant
 
----
+Loops should be checked for length, appropriate exit criteria, and speed. Loops with many objects may be considerably slower than loops with very few local variables; faster alternatives should always be considered.
 
+Things like incorrect indenting or incorrect boundary conditions for loop exit are usual errors and are bugs that should be caught early on.
 
-### Duplicate Code: should be avoided at all costs and made into modular methods<a name="dupe_code"></a>
+[Read more about Loop performance.](Performance.md/#loops)
 
+### Duplicate Code: should be avoided at all costs
 
-___TODO: THIS NEEDS AN EXAMPLE___
+Look for code doing similar things; this is an opportunity for refactoring and/or removing duplication. Consider that code doing similar things needs more maintenance, so when an input type changes, multiple places will need to change as well.
 
+### Idiomatic alternatives
 
----
+Look for code that can be replaced with Python idioms. Sometimes these idioms are more performant and generally makes code more readable.
 
+[Read more about Python idioms](Performance.md/#idioms)
 
-### Defending Against Input: keeps things accurate and safe<a name="input_defense"></a>
+### Commit messages: should clearly state the Project and what you did to it
 
-___TODO: THIS NEEDS AN EXAMPLE___
+Clearly written commit messages let us go back and find the point where something was changed. It takes longer to find the source of a bug if messages are poorly written.
 
+```sh
+git commit -m "Project: debugged issue with foo(). Tests pass."
+```
 
-## Advanced Code Review<a name="adv_code_review"></a>
+### Commented source code: should be deleted
 
-___TODO: ALL OF THIS___
+If code is commented out, it should be deleted. Leaving commented code in-place decreases readability. Utilize source control to re-introduce code that was previously removed.
