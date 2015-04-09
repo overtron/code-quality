@@ -69,7 +69,7 @@ Things like incorrect indenting or incorrect boundary conditions for loop exit a
 
 [Read more about Loop performance.](Performance.md/#loops)
 
-### Duplicate Code: should be avoided at all costs<a name="dupe_code"></a>
+### Duplicate Code: should be avoided<a name="dupe_code"></a>
 
 Look for code doing similar things; this is an opportunity for refactoring and/or removing duplication. Consider that code doing similar things needs more maintenance, so when an input type changes, multiple places will need to change as well.
 
