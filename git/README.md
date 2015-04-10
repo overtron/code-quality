@@ -23,7 +23,7 @@ git submodule add https://github.com/ftb-dataengineering/code-quality.git
 IMPORTANT: run this script from the top-level of your repo (the repo you want to add the pre-commit hook to)!
 
 ```shell
-sudo code-quality/git/setup_precommit_hook.sh
+code-quality/git/setup_precommit_hook.sh
 ```
 
 
