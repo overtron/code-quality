@@ -71,8 +71,13 @@ class KettleStep:
 
     @staticmethod
     def contains_value(step, field, value):
-        tag = step.find(field)
-        if tag.text.find(value) == -1:
-            return False
+        if not isinstance(value, list):
+            list_value = [value]
         else:
-            return True
+            list_value = value
+        tag = step.find(field)
+        result = False
+        for val in list_value:
+            if tag.text.find(val) != -1:
+                result = True
+        return result

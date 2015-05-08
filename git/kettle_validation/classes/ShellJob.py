@@ -14,14 +14,10 @@ class Shell(KettleStep):
         field = "insertScript"
         value = "y"
         search_field = "script"
-        search_value_1 = "table_copy"
-        search_value_2 = "etl2prod"
-        search_value_3 = "prod2etl"
+        search_value = ["table_copy", "etl2prod", "prod2etl"]
         for step in self.all_steps:
             if self.is_value(step, field, value):
-                if self.contains_value(step, search_field, search_value_1) \
-                        or self.contains_value(step, search_field, search_value_2) \
-                        or self.contains_value(step, search_field, search_value_3):
+                if self.contains_value(step, search_field, search_value):
                     using_dl.append(step)
             else:
                 external_script.append(step)
