@@ -38,6 +38,7 @@ class MyTestCase(unittest.TestCase):
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(self.messages.data_logistics, result['notifications'][0].message, "Data Logistics used")
+        self.assertEqual(self.messages.deprecated_dl, result['notifications'][1].message, "Deprecated DL used")
 
     def test_run_tests_dl_possible(self):
         data = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -113,7 +114,7 @@ class MyTestCase(unittest.TestCase):
         t = Shell(data)
         result = t.run_tests()
         pretty_print(result)
-        self.assertEqual(self.messages.data_logistics, result['notifications'][0].message, "etl2prod")
+        self.assertEqual(self.messages.deprecated_dl, result['notifications'][0].message, "etl2prod")
 
     def test_prod2etl(self):
         data = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -137,7 +138,7 @@ class MyTestCase(unittest.TestCase):
         t = Shell(data)
         result = t.run_tests()
         pretty_print(result)
-        self.assertEqual(self.messages.data_logistics, result['notifications'][0].message, "prod2etl")
+        self.assertEqual(self.messages.deprecated_dl, result['notifications'][0].message, "prod2etl")
 
 
 if __name__ == '__main__':

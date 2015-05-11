@@ -14,7 +14,7 @@ class IssueMessages:
     ignore_insert_errors = "Be careful enabling 'ignore insert errors' this supresses all insert errors mysql might " \
                            "throw"
     unique_rows = "The unique rows option is not reliable. It is preferable to use a separate unique rows step"
-    null_steps = "Bulit in steps that convert values to null don't work well. Consider using Javascript step instead."
+    null_steps = "Built in steps that convert values to null don't work well. Consider using Javascript step instead."
 
     # errors
     missing_encoding = "File encoding should be set on content tab"
@@ -30,5 +30,6 @@ class IssueMessages:
     # notifications
     external_script = "Unable to follow path to inserted script. Data Logistics may be used."
     data_logistics = "Data logistics is used in this transformation."
+    deprecated_dl = "This file is using etl2prod or prod2etl. These uses should be updated to the latest version of DL"
     ftb_importv0 = "FTB Import step v0 exists"
     ftb_importv1 = "FTB Import step v1 exists"

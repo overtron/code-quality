@@ -67,10 +67,15 @@ class ImportMethodChecker():
     def shell_file_checks(self, file_path):
         with open(file_path, "rU") as fp1:
             for line in fp1:
-                max_index = max(line.find("table_copy"), line.find("etl2prod"), line.find("prod2etl"))
+                if line.find("table_copy") != -1:
+                    self.data_logistics_count += 1
+                    PARSER_LOGGER.warning(self.COLORIZER.yellow("{}: {}".format(file_path,
+                                                                                IssueMessages.data_logistics)))
+                max_index = max(line.find("etl2prod"), line.find("prod2etl"))
                 if max_index != -1:
                     self.data_logistics_count += 1
-                    PARSER_LOGGER.warning(self.COLORIZER.yellow("{}: Datalogistics command found".format(file_path)))
+                    PARSER_LOGGER.warning(self.COLORIZER.yellow("{}: {}".format(file_path,
+                                                                                IssueMessages.deprecated_dl)))
 
     def check_files(self, path):
         files = get_files_from_path(path, self.endings)
