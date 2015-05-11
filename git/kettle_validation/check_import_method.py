@@ -33,8 +33,8 @@ class ImportMethodChecker():
 
     def log_checks(self, results):
         for result in results:
-            notifications = len(result.issues[KS.NOTIFICATION])
-            if notifications > 0:
+            notifications = result.issues[KS.NOTIFICATION]
+            if len(notifications) > 0:
                 for w in result.issues[KS.NOTIFICATION]:
                         PARSER_LOGGER.warning(self.COLORIZER.yellow("{}: {}".format(w.step_name, w.message)))
 
