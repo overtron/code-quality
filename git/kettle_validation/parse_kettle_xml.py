@@ -6,7 +6,18 @@ __author__ = 'aoverton'
 
 
 class ParseKettleXml:
+    """
+    Parses kettle .ktr and .kjb files for easy manipulation by other tools
+
+    """
     def __init__(self, data, isFile=True):
+        """
+        Create object for kettle parsing
+
+        :param data: File pointer or string of kettle XML
+        :param isFile: Flag that indicates whether or not a file point or string is being passed
+        :return: None
+        """
         self.logger = logging.getLogger()
         self.root = None
         self.steps = defaultdict(list)
@@ -17,6 +28,11 @@ class ParseKettleXml:
         self.name = ""
 
     def parse_xml(self):
+        """
+        Coordinates parsing of XML to its component pieces
+
+        :return: dict that contains key parts of XML extracted
+        """
         if self.isFile:
             self.root = ET.parse(self.data).getroot()
         else:
@@ -28,6 +44,11 @@ class ParseKettleXml:
                 'name': self.name}
 
     def parse_elements(self):
+        """
+        Finds and extracts the relevant parts of the XML based on whether it is a trans or job
+
+        :return: None
+        """
         if self.root.tag == "transformation":
             self.name = self.root.find("./info/name").text
             for step in self.root.iter("step"):

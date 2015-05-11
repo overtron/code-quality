@@ -4,11 +4,27 @@ __author__ = 'aoverton'
 
 
 class Shell(KettleStep):
+    """
+    Models the SHELL step. Relies heavily on members created in parent class
+
+    """
+
     def __init__(self, data):
+        """
+        Call parent init and select relevant steps
+
+        :param data: dict of step names and corresponding list of steps from trans/job
+        :return: None
+        """
         KettleStep.__init__(self)
         self.all_steps = data['steps']['SHELL']
 
     def using_data_logistics(self):
+        """
+        Check if datalogistics is being used with a distinction between current and deprecated versions
+
+        :return: None
+        """
         using_table_copy = []
         using_old_dl = []
         external_script = []
@@ -30,5 +46,10 @@ class Shell(KettleStep):
         self.add_all_issues(external_script, self.NOTIFICATION, self.issue_messages.external_script)
 
     def run_tests(self):
+        """
+        Run all tests in class
+
+        :return: issues from test
+        """
         self.using_data_logistics()
         return self.issues

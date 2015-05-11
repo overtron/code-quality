@@ -2,6 +2,7 @@ import argparse
 import sys
 import logging
 from collections import namedtuple
+# import * is used below to avoid maintaining a list of tests. See classes/__init__.py for imported classes
 from classes import *
 from classes.PrettyColors import PrettyColors
 from classes.KettleStep import KettleStep as KS
@@ -15,9 +16,19 @@ __author__ = 'aoverton'
 PARSER_LOGGER = logging.getLogger(__name__)
 
 class KettleChecker():
+    """
+    Given a file or folder runs a set of code quality checks on all .ktr and .kjb files found
+
+    """
     COLORIZER = PrettyColors()
 
     def __init__(self, path):
+        """
+        Create an object that contains a list of valid files to check and member variables to store results
+
+        :param path: path to file or folder to check
+        :return None
+        """
         Endings = namedtuple("Endings", "trans job")
         self.Response = namedtuple("Response", "step issues")
         self.endings = Endings(".ktr", ".kjb")
@@ -26,6 +37,12 @@ class KettleChecker():
         self.files = get_files_from_path(path, self.endings)
 
     def log_checks(self, results):
+        """
+        Print the results of the file checks using the logger
+
+        :param results: A list of Response namedtuples
+        :return None
+        """
         for result in results:
             errors = len(result.issues[KS.ERRORS])
             warnings = len(result.issues[KS.WARNINGS])
@@ -39,6 +56,11 @@ class KettleChecker():
                         PARSER_LOGGER.warning(self.COLORIZER.yellow("{}: {}".format(w.step_name, w.message)))
 
     def summarize(self):
+        """
+        Print a summary of all warnings and errors for a file or folder using the logger
+
+        :return None
+        """
         print "\n\n"
         PARSER_LOGGER.info("============= SUMMARY ===============")
         if self.errors_present > 0:
@@ -61,6 +83,13 @@ class KettleChecker():
             PARSER_LOGGER.info(self.COLORIZER.green("No validation warnings found"))
 
     def transformation_checks(self, data):
+        """
+        Iterate through all of the transformation tests
+
+        :param data: dictionary where keys are step types and values are a list of those step types from the
+        transformation
+        :return: None
+        """
         results = []
         append = lambda x, y: results.append(self.Response(x, y))
         for test_class in class_list_trans:
@@ -75,6 +104,11 @@ class KettleChecker():
         pass
 
     def check_files(self):
+        """
+        Iterate through all files to be checked and pass them to the appropriate method to conduct checks
+
+        :return: None
+        """
         for file_path in self.files:
             print "\n\n"
             PARSER_LOGGER.info("KETTLE VALIDATOR: {}".format(file_path))
@@ -88,13 +122,24 @@ class KettleChecker():
 
 
 def main(path):
+    """
+    Runs all kettle checks on provided path
+
+    :param path: path to file or folder to check
+    :return: integer that is count of total number of errors found
+    """
     checker = KettleChecker(path)
     checker.check_files()
     return checker.errors_present
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Get parsing parameters for kettle checker')
+    """
+    Parser for command line arguments
+
+    :return: dictionary of command line arguments
+    """
+    parser = argparse.ArgumentParser(description='Check kettle files for common errors and design flaws')
     parser.add_argument('path', help='Path to folder or file to run the checker on')
     return vars(parser.parse_args())
 

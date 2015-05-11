@@ -2,6 +2,10 @@
 __author__ = 'aoverton'
 
 class IssueMessages:
+    """
+    Contains warnings, erors and notification messages to be returned when issues are found
+
+    """
     # warnings
     not_required = "Input files should be set to 'Y' unless they are optional for the transformation"
     lazy_conversion = "Be careful enabling lazy conversion. It's only appropriate for simple reading and writing of " \

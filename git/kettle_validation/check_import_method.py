@@ -16,6 +16,10 @@ __author__ = 'aoverton'
 PARSER_LOGGER = logging.getLogger(__name__)
 
 class ImportMethodChecker():
+    """
+    Given a file or folder checks for the use datalogistics or PAPI imports
+
+    """
     COLORIZER = PrettyColors()
     messages = IssueMessages()
     Endings = namedtuple("Endings", "trans job shell")
@@ -24,6 +28,11 @@ class ImportMethodChecker():
     class_list_dl = ['ShellJob']
 
     def __init__(self):
+        """
+        Create an object that contains the appropriate member variables to store results
+
+        :return: None
+        """
         Endings = namedtuple("Endings", "trans job shell")
         self.Response = namedtuple("Response", "step issues")
         self.endings = Endings(".ktr", ".kjb", ".sh")
@@ -32,6 +41,12 @@ class ImportMethodChecker():
         self.data_logistics_count = 0
 
     def log_checks(self, results):
+        """
+        Print the results of the file checks using the logger
+
+        :param results: A list of Response namedtuples
+        :return: None
+        """
         for result in results:
             notifications = result.issues[KS.NOTIFICATION]
             if len(notifications) > 0:
@@ -39,6 +54,13 @@ class ImportMethodChecker():
                         PARSER_LOGGER.warning(self.COLORIZER.yellow("{}: {}".format(w.step_name, w.message)))
 
     def data_logistics_checks(self, data):
+        """
+        Run tests and collect results on use of data logistics
+
+        :param data: dictionary where keys are step types and values are a list of those step types from the
+        transformation
+        :return: None
+        """
         results = []
         append = lambda x, y: results.append(self.Response(x, y))
         for test_class in self.class_list_dl:
@@ -51,6 +73,13 @@ class ImportMethodChecker():
         self.log_checks(results)
 
     def ftb_import_checks(self, data):
+        """
+        Run tests and collect results on use of PAPI imports
+
+        :param data: dictionary where keys are step types and values are a list of those step types from the
+        transformation
+        :return: None
+        """
         results = []
         append = lambda x, y: results.append(self.Response(x, y))
         for test_class in self.class_list_import:
@@ -65,6 +94,12 @@ class ImportMethodChecker():
         self.log_checks(results)
 
     def shell_file_checks(self, file_path):
+        """
+        Run tests and collect results on use of datalogistcs in shell scripts
+
+        :param file_path: file path to shell script to check
+        :return: None
+        """
         with open(file_path, "rU") as fp1:
             for line in fp1:
                 if line.find("table_copy") != -1:
@@ -78,6 +113,12 @@ class ImportMethodChecker():
                                                                                 IssueMessages.deprecated_dl)))
 
     def check_files(self, path):
+        """
+        Iterate through all files to be checked and pass them to the appropriate method to conduct checks
+
+        :param path: path to file or folder to check
+        :return: None
+        """
         files = get_files_from_path(path, self.endings)
         for file_path in files:
             if file_path.endswith(self.endings.trans):
@@ -90,6 +131,11 @@ class ImportMethodChecker():
                 self.shell_file_checks(file_path)
 
     def summary(self):
+        """
+        Create a summary of results from tests
+
+        :return: dictionary of summarized results
+        """
         dl_present = self.data_logistics_count > 0
         papi_import_present = self.ftb_import_vo_count > 0 or self.ftb_import_v1_count > 0
         return {'ftb_import_v0': self.ftb_import_vo_count,
@@ -100,13 +146,24 @@ class ImportMethodChecker():
 
 
 def main(path):
+    """
+    Runs import checks on provided path
+
+    :param path: path to file or folder to check
+    :return: dictionary of summarized results
+    """
     checker = ImportMethodChecker()
     checker.check_files(path)
     return checker.summary()
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Get parsing parameters for kettle checker')
+    """
+    Parser for command line arguments
+
+    :return: dictionary of command line arguments
+    """
+    parser = argparse.ArgumentParser(description='Check kettle files for use of datalogistis or PAPI imports')
     parser.add_argument('path', help='Path to folder or file to run the checker on')
     return vars(parser.parse_args())
 

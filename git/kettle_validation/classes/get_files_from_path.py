@@ -7,6 +7,13 @@ __author__ = 'aoverton'
 
 
 def get_files_from_path(path, endings_list):
+    """
+    Extracts the valid file(s) from a file or folder
+
+    :param path: path to target file or folder
+    :param endings_list: list of valid endings
+    :return: list of valid files
+    """
     files = []
     if not os.path.exists(path):
         raise FileNotFound
