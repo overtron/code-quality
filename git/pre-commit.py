@@ -8,7 +8,7 @@ import sys
 import tempfile
 import linecache
 
-from git.src import check_kettle_files as validate_kettle
+from kettle_validation import check_kettle_files
 import parse_kettle_source as kettle_parse
 
 
@@ -364,7 +364,7 @@ def main():
             kettle_error_free = kettle_parse.kettle_evaluate(actual_file)
             if not kettle_error_free:
                 pre_commit_errors = 1
-            pre_commit_errors += validate_kettle.main(name)
+            pre_commit_errors += check_kettle_files.main(name)
         else:
             pylint_error, pylint_report = run_pylint(actual_file)
             pre_commit_errors += pylint_error
