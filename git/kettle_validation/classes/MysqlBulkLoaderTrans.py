@@ -19,9 +19,9 @@ class MysqlBulkLoader(KettleStep):
         KettleStep.__init__(self)
         self.all_steps = data['steps']['MySQLBulkLoader']
 
-    def select_star(self):
+    def default_pipe(self):
         """
-        Checks for uses of select *
+        Checks for use of default pipe
 
         :return: None
         """
@@ -30,20 +30,12 @@ class MysqlBulkLoader(KettleStep):
         bulk_steps = [step for step in self.all_steps if self.contains_value(step, field, value)]
         self.add_all_issues(bulk_steps, self.ERRORS, self.issue_messages.default_fifo)
 
-    def existence(self):
-        """
-        Check if the step exists
-
-        :return: None
-        """
-        self.add_all_issues(self.all_steps, self.WARNINGS, self.issue_messages.bulk_loader)
-
     def run_tests(self):
         """
         Run all tests in class
 
         :return: issues from test
         """
-        self.select_star()
-        self.existence()
+        self.default_pipe()
+        self.existence(self.WARNINGS, self.issue_messages.bulk_loader)
         return self.issues

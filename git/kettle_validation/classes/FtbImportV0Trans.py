@@ -19,19 +19,11 @@ class FtbImportV0(KettleStep):
         KettleStep.__init__(self)
         self.all_steps = data['steps']['FTBImportPlugin']
 
-    def existence(self):
-        """
-        Check if the step exists
-
-        :return: None
-        """
-        self.add_all_issues(self.all_steps, self.NOTIFICATION, self.issue_messages.ftb_importv0)
-
     def run_tests(self):
         """
         Run all tests in class
 
         :return: issues from test
         """
-        self.existence()
+        self.existence(self.NOTIFICATION, self.issue_messages.ftb_importv0)
         return self.issues

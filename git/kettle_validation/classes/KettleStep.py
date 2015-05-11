@@ -139,3 +139,73 @@ class KettleStep:
             if tag.text.find(val) != -1:
                 result = True
         return result
+
+    def text_files_not_required(self):
+        """
+        Check if text files are missing required flag
+
+        :return: None
+        """
+        not_required = filter(self.is_file_missing_required_flag, self.all_steps)
+        self.add_all_issues(not_required, self.WARNINGS, self.issue_messages.not_required)
+
+    def limits_set(self):
+        """
+        Check if limit is used
+
+        :return: None
+        """
+        set_limits = filter(self.is_limit_set, self.all_steps)
+        self.add_all_issues(set_limits, self.ERRORS, self.issue_messages.limit_set)
+
+    def missing_encodings(self):
+        """
+        Missing encoding check
+
+        :return: None
+        """
+        missing_encodings = filter(self.is_missing_encoding, self.all_steps)
+        self.add_all_issues(missing_encodings, self.ERRORS, self.issue_messages.missing_encoding)
+
+    def existence(self, notification_level, message):
+        """
+        Check if the step exists
+
+        :param notification_level: level of notification to add
+        :param message: message to log with the issue
+        :return: None
+        """
+        self.add_all_issues(self.all_steps, notification_level, message)
+
+    def ignore_empty_file(self):
+        """
+        Check if step ignores empty files
+
+        :return: None
+        """
+        field = "IsIgnoreEmptyFile"
+        value = "y"
+        ignore_emptys = [step for step in self.all_steps if self.is_value(step, field, value)]
+        self.add_all_issues(ignore_emptys, self.WARNINGS, self.issue_messages.ignore_empty_file)
+
+    def ignore_missing_file(self):
+        """
+        Check if step ignores missing files
+
+        :return: None
+        """
+        field = "doNotFailIfNoFile"
+        value = "y"
+        ignore_emptys = [step for step in self.all_steps if self.is_value(step, field, value)]
+        self.add_all_issues(ignore_emptys, self.WARNINGS, self.issue_messages.ignore_missing_file)
+
+    def lazy_conversion(self, field):
+        """
+        Check if lazy conversions is used
+
+        :param field: name of node to search for lazy conversion
+        :return: None
+        """
+        value = "y"
+        lazy_steps = [step for step in self.all_steps if self.is_value(step, field, value)]
+        self.add_all_issues(lazy_steps, self.WARNINGS, self.issue_messages.lazy_conversion)
