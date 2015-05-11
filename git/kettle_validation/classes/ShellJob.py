@@ -9,6 +9,9 @@ class Shell(KettleStep):
 
     """
 
+    search_value_table_copy = "table_copy"
+    search_value_old_dl = ["etl2prod", "prod2etl"]
+
     def __init__(self, data):
         """
         Call parent init and select relevant steps
@@ -33,11 +36,9 @@ class Shell(KettleStep):
         for step in self.all_steps:
             if self.is_value(step, field, value):
                 search_field = "script"
-                search_value_table_copy = "table_copy"
-                search_value_old_dl = ["etl2prod", "prod2etl"]
-                if self.contains_value(step, search_field, search_value_table_copy):
+                if self.contains_value(step, search_field, self.search_value_table_copy):
                     using_table_copy.append(step)
-                if self.contains_value(step, search_field, search_value_old_dl):
+                if self.contains_value(step, search_field, self.search_value_old_dl):
                     using_old_dl.append(step)
             else:
                 external_script.append(step)
