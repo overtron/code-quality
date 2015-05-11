@@ -22,11 +22,10 @@ class KettleChecker():
     """
     COLORIZER = PrettyColors()
 
-    def __init__(self, path):
+    def __init__(self):
         """
-        Create an object that contains a list of valid files to check and member variables to store results
+        Create an object that contains the appropriate member variables to store results
 
-        :param path: path to file or folder to check
         :return None
         """
         Endings = namedtuple("Endings", "trans job")
@@ -34,7 +33,6 @@ class KettleChecker():
         self.endings = Endings(".ktr", ".kjb")
         self.errors_present = 0
         self.warnings_present = 0
-        self.files = get_files_from_path(path, self.endings)
 
     def log_checks(self, results):
         """
@@ -103,13 +101,15 @@ class KettleChecker():
     def job_checks(self, root):
         pass
 
-    def check_files(self):
+    def check_files(self, path):
         """
         Iterate through all files to be checked and pass them to the appropriate method to conduct checks
 
+        :param path: path to file or folder to check
         :return: None
         """
-        for file_path in self.files:
+        files = get_files_from_path(path, self.endings)
+        for file_path in files:
             print "\n\n"
             PARSER_LOGGER.info("KETTLE VALIDATOR: {}".format(file_path))
             data = ParseKettleXml(file_path).parse_xml()
@@ -128,8 +128,8 @@ def main(path):
     :param path: path to file or folder to check
     :return: integer that is count of total number of errors found
     """
-    checker = KettleChecker(path)
-    checker.check_files()
+    checker = KettleChecker()
+    checker.check_files(path)
     return checker.errors_present
 
 
