@@ -122,10 +122,10 @@ class ImportMethodChecker():
         try:
             files = get_files_from_path(path, self.endings)
         except FileNotFound as e:
-            print e.message
+            PARSER_LOGGER.error(self.COLORIZER.red(e.message))
             sys.exit(1)
         except InvalidFileType as e:
-            print e.message
+            PARSER_LOGGER.error(self.COLORIZER.red(e.message))
             sys.exit(2)
         for file_path in files:
             if file_path.endswith(self.endings.trans):
