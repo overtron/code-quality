@@ -38,10 +38,11 @@ class ParseKettleXml:
         else:
             self.root = ET.fromstring(self.data)
         self.parse_elements()
-        return {'steps': self.steps,
+        output = {'steps': self.steps,
                 'hops': self.hops,
                 'error_handling': self.error_handling,
                 'name': self.name}
+        return output
 
     def parse_elements(self):
         """
