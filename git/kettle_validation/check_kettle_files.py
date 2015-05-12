@@ -9,7 +9,7 @@ from classes.KettleStep import KettleStep as KS
 from parse_kettle_xml import ParseKettleXml
 from classes.get_files_from_path import get_files_from_path
 from classes import class_list_trans
-
+from classes.custom_exceptions import FileNotFound, InvalidFileType
 
 __author__ = 'aoverton'
 
@@ -108,7 +108,14 @@ class KettleChecker():
         :param path: path to file or folder to check
         :return: None
         """
-        files = get_files_from_path(path, self.endings)
+        try:
+            files = get_files_from_path(path, self.endings)
+        except FileNotFound as e:
+            print e.message
+            sys.exit(1)
+        except InvalidFileType as e:
+            print e.message
+            sys.exit(2)
         for file_path in files:
             print "\n\n"
             PARSER_LOGGER.info("KETTLE VALIDATOR: {}".format(file_path))

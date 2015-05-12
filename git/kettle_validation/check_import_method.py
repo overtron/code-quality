@@ -9,7 +9,7 @@ from classes.KettleStep import KettleStep as KS
 from classes.IssueMessages import IssueMessages
 from classes.PrettyColors import PrettyColors
 from classes.get_files_from_path import get_files_from_path
-
+from classes.custom_exceptions import FileNotFound, InvalidFileType
 
 __author__ = 'aoverton'
 
@@ -119,7 +119,14 @@ class ImportMethodChecker():
         :param path: path to file or folder to check
         :return: None
         """
-        files = get_files_from_path(path, self.endings)
+        try:
+            files = get_files_from_path(path, self.endings)
+        except FileNotFound as e:
+            print e.message
+            sys.exit(1)
+        except InvalidFileType as e:
+            print e.message
+            sys.exit(2)
         for file_path in files:
             if file_path.endswith(self.endings.trans):
                 data = ParseKettleXml(file_path).parse_xml()

@@ -38,7 +38,7 @@ class KettleStep:
         :return: None
         """
         if issue_type not in self.issues.keys():
-            raise InvalidIssueType
+            raise InvalidIssueType("Issue types must be included in KettleStep issues variable before they can be used")
         if isinstance(kv_pair, self.Issue):
             self.issues[issue_type].append(kv_pair)
 

@@ -24,6 +24,3 @@ class InvalidFileType(Exception):
 
     """
     pass
-
-class InvalidResultType(Exception):
-    pass
