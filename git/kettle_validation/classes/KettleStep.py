@@ -177,27 +177,17 @@ class KettleStep:
         """
         self.add_all_issues(self.all_steps, notification_level, message)
 
-    def ignore_empty_file(self):
+    def ignore_files(self, field, value, notification_level, message):
         """
-        Check if step ignores empty files
-
+        Check if step ignores empty files or missing files
+        :param field: XML node to check
+        :param value: value to check versus field value
+        :param notification_level: level of notification to raise
+        :param message: message to pass
         :return: None
         """
-        field = "IsIgnoreEmptyFile"
-        value = "y"
-        ignore_emptys = [step for step in self.all_steps if self.is_value(step, field, value)]
-        self.add_all_issues(ignore_emptys, self.WARNINGS, self.issue_messages.ignore_empty_file)
-
-    def ignore_missing_file(self):
-        """
-        Check if step ignores missing files
-
-        :return: None
-        """
-        field = "doNotFailIfNoFile"
-        value = "y"
-        ignore_emptys = [step for step in self.all_steps if self.is_value(step, field, value)]
-        self.add_all_issues(ignore_emptys, self.WARNINGS, self.issue_messages.ignore_missing_file)
+        problem_steps = [step for step in self.all_steps if self.is_value(step, field, value)]
+        self.add_all_issues(problem_steps, notification_level, message)
 
     def lazy_conversion(self, field):
         """

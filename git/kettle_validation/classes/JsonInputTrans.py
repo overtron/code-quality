@@ -27,6 +27,6 @@ class JsonInput(KettleStep):
         """
         self.limits_set()
         self.text_files_not_required()
-        self.ignore_empty_file()
-        self.ignore_missing_file()
+        self.ignore_files("IsIgnoreEmptyFile", "y", self.WARNINGS, self.issue_messages.ignore_empty_file)
+        self.ignore_files("doNotFailIfNoFile", "y", self.WARNINGS, self.issue_messages.ignore_missing_file)
         return self.issues
