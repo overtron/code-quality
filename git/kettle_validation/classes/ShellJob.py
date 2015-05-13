@@ -1,4 +1,5 @@
 from KettleStep import KettleStep
+from DatalogisticsVersions import DataLogisticsVersions
 
 __author__ = 'aoverton'
 
@@ -10,8 +11,6 @@ class Shell(KettleStep):
     """
 
     step_name = 'SHELL'
-    search_value_table_copy = "table_copy"
-    search_value_old_dl = ["etl2prod", "prod2etl"]
 
     def using_data_logistics(self):
         """
@@ -27,9 +26,9 @@ class Shell(KettleStep):
         for step in self.all_steps:
             if self.is_value(step, field, value):
                 search_field = "script"
-                if self.contains_value(step, search_field, self.search_value_table_copy):
+                if self.contains_value(step, search_field, DataLogisticsVersions.current_dl_versions):
                     using_table_copy.append(step)
-                if self.contains_value(step, search_field, self.search_value_old_dl):
+                if self.contains_value(step, search_field, DataLogisticsVersions.deprecated_dl_versions):
                     using_old_dl.append(step)
             else:
                 external_script.append(step)

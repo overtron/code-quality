@@ -10,6 +10,7 @@ from classes.IssueMessages import IssueMessages
 from classes.PrettyColors import PrettyColors
 from classes.get_files_from_path import get_files_from_path
 from classes.custom_exceptions import FileNotFound, InvalidFileType
+from classes.DatalogisticsVersions import DataLogisticsVersions
 
 __author__ = 'aoverton'
 
@@ -100,12 +101,12 @@ class ImportMethodChecker():
         """
         with open(file_path, "rU") as fp1:
             for line in fp1:
-                if line.find("table_copy") != -1:
+                find_it = lambda x: line.find(x)
+                if max(map(find_it, DataLogisticsVersions.current_dl_versions)) != -1:
                     self.data_logistics_count += 1
                     PARSER_LOGGER.warning(self.COLORIZER.yellow("{}: {}".format(file_path,
                                                                                 IssueMessages.data_logistics)))
-                max_index = max(line.find("etl2prod"), line.find("prod2etl"))
-                if max_index != -1:
+                if max(map(find_it, DataLogisticsVersions.deprecated_dl_versions)) != -1:
                     self.data_logistics_count += 1
                     PARSER_LOGGER.warning(self.COLORIZER.yellow("{}: {}".format(file_path,
                                                                                 IssueMessages.deprecated_dl)))
