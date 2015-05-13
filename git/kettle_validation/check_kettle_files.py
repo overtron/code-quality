@@ -35,7 +35,6 @@ class KettleChecker():
         self.errors_present = 0
         self.warnings_present = 0
         self.trans_results = None
-        self.append = lambda x, y: self.trans_results.append(self.Response(x, y))
 
     def log_checks(self, results):
         """
