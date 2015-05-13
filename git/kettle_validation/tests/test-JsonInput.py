@@ -32,7 +32,7 @@ class MyTestCase(unittest.TestCase):
         self.data = ParseKettleXml(self.data, isFile=False).parse_xml()
 
     def test_run_tests(self):
-        t = JsonInput(self.data)
+        t = JsonInput(self.data['steps'][JsonInput.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(3, len(result['warnings']), "Required File, Ignore Empty File, Ignore Missing File")

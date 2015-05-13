@@ -24,6 +24,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_run_tests(self):
         t = IfNull(self.data)
+        t = IfNull(self.data['steps'][IfNull.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(1, len(result['warnings']), "Existence")

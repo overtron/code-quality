@@ -9,18 +9,9 @@ class Shell(KettleStep):
 
     """
 
+    step_name = 'SHELL'
     search_value_table_copy = "table_copy"
     search_value_old_dl = ["etl2prod", "prod2etl"]
-
-    def __init__(self, data):
-        """
-        Call parent init and select relevant steps
-
-        :param data: dict of step names and corresponding list of steps from trans/job
-        :return: None
-        """
-        KettleStep.__init__(self)
-        self.all_steps = data['steps']['SHELL']
 
     def using_data_logistics(self):
         """

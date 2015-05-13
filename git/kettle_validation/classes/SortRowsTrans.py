@@ -9,17 +9,7 @@ class SortRows(KettleStep):
 
     """
 
-    def __init__(self, data):
-        """
-        Call parent init and select relevant steps
-
-        :param data: dict of step names and corresponding list of steps from trans/job
-        :return: None
-        """
-        KettleStep.__init__(self)
-        self.all_steps = data['steps']['SortRows']
-        if not isinstance(self.all_steps, list):
-            self.all_steps = [self.all_steps]
+    step_name = 'SortRows'
 
     def unique_rows(self):
         """

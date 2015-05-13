@@ -26,7 +26,7 @@ class MyTestCase(unittest.TestCase):
         self.data = ParseKettleXml(self.data, isFile=False).parse_xml()
 
     def test_run_tests(self):
-        t = TableInput(self.data)
+        t = TableInput(self.data['steps'][TableInput.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(2, len(result['warnings']), "Select *, Lazy Conversion")

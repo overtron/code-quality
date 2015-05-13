@@ -4,8 +4,9 @@ import logging
 from collections import namedtuple
 # import * is used below to avoid maintaining a list of tests. See classes/__init__.py for imported classes
 from classes import *
+from classes.GeneralTransformationCustom import GeneralTransformation
 from classes.PrettyColors import PrettyColors
-from classes.KettleStep import KettleStep as KS
+from classes.KettleStep import KettleStep
 from parse_kettle_xml import ParseKettleXml
 from classes.get_files_from_path import get_files_from_path
 from classes import class_list_trans
@@ -33,6 +34,8 @@ class KettleChecker():
         self.endings = Endings(".ktr", ".kjb")
         self.errors_present = 0
         self.warnings_present = 0
+        self.trans_results = None
+        self.append = lambda x, y: self.trans_results.append(self.Response(x, y))
 
     def log_checks(self, results):
         """
@@ -42,15 +45,15 @@ class KettleChecker():
         :return None
         """
         for result in results:
-            errors = len(result.issues[KS.ERRORS])
-            warnings = len(result.issues[KS.WARNINGS])
+            errors = len(result.issues[KettleStep.ERRORS])
+            warnings = len(result.issues[KettleStep.WARNINGS])
             if errors > 0 or warnings > 0:
                 PARSER_LOGGER.info(self.COLORIZER.green("Report for: {} Checks".format(result.step)))
                 if errors > 0:
-                    for w in result.issues[KS.ERRORS]:
+                    for w in result.issues[KettleStep.ERRORS]:
                         PARSER_LOGGER.error(self.COLORIZER.red("{}: {}".format(w.step_name, w.message)))
                 if warnings > 0:
-                    for w in result.issues[KS.WARNINGS]:
+                    for w in result.issues[KettleStep.WARNINGS]:
                         PARSER_LOGGER.warning(self.COLORIZER.yellow("{}: {}".format(w.step_name, w.message)))
 
     def summarize(self):
@@ -80,23 +83,41 @@ class KettleChecker():
         else:
             PARSER_LOGGER.info(self.COLORIZER.green("No validation warnings found"))
 
+    def do_test(self, kettle_step_subclass):
+        """
+        Executes the run_tests interface and collects the results
+
+        :param kettle_step_subclass: a subclass of the KettleStep class
+        :return: None
+        """
+        if not isinstance(kettle_step_subclass, KettleStep):
+            PARSER_LOGGER.error(self.COLORIZER.red("do_test method must be passed a subclass of KettleStep"))
+            sys.exit(3)
+        try:
+            report = kettle_step_subclass.run_tests()
+        except NotImplementedError:
+            PARSER_LOGGER.error(self.COLORIZER.red("run_tests method is abstract and must be overridden"))
+            sys.exit(4)
+        self.errors_present += len(report[KettleStep.ERRORS])
+        self.warnings_present += len(report[KettleStep.WARNINGS])
+        self.trans_results.append(self.Response(kettle_step_subclass.__class__.__name__, report))
+
     def transformation_checks(self, data):
         """
         Iterate through all of the transformation tests
 
-        :param data: dictionary where keys are step types and values are a list of those step types from the
-        transformation
+        :param data: dict where top level keys are categories of data parsed from transformation/job
         :return: None
         """
-        results = []
-        append = lambda x, y: results.append(self.Response(x, y))
+        self.trans_results = []
         for test_class in class_list_trans:
-            t = eval("{}.{}(data)".format(test_class, test_class[:-5]))
-            report = t.run_tests()
-            self.errors_present += len(report[KS.ERRORS])
-            self.warnings_present += len(report[KS.WARNINGS])
-            append(test_class, report)
-        self.log_checks(results)
+            # initializes an object and passes it the appropriate data
+            t = eval("{0}.{1}(data['steps'].get({0}.{1}.step_name, []))".format(test_class, test_class[:-5]))
+            self.do_test(t)
+        # GeneralTransformation checks are run separately because the class has a different signature
+        t = GeneralTransformation(all_hops=data['hops'], all_error_handling=data['error_handling'])
+        self.do_test(t)
+        self.log_checks(self.trans_results)
 
     def job_checks(self, root):
         pass

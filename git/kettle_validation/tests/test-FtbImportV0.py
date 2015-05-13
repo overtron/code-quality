@@ -24,7 +24,7 @@ class MyTestCase(unittest.TestCase):
         self.data = ParseKettleXml(self.data, isFile=False).parse_xml()
 
     def test_run_tests(self):
-        t = FtbImportV0(self.data)
+        t = FtbImportV0(self.data['steps'][FtbImportV0.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(1, len(result['notifications']), "Ftb Import V0 Existence")

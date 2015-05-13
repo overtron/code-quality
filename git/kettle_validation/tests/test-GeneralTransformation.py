@@ -1,6 +1,6 @@
 import unittest
 
-from git.kettle_validation.classes.GeneralTransformationTrans import GeneralTransformation
+from git.kettle_validation.classes.GeneralTransformationCustom import GeneralTransformation
 from git.kettle_validation.tests.pretty_print import pretty_print
 from git.kettle_validation.parse_kettle_xml import ParseKettleXml
 
@@ -33,7 +33,7 @@ class MyTestCase(unittest.TestCase):
         self.data = ParseKettleXml(self.data, isFile=False).parse_xml()
 
     def test_run_tests(self):
-        t = GeneralTransformation(self.data)
+        t = GeneralTransformation(all_hops=self.data['hops'], all_error_handling=self.data['error_handling'])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(0, len(result['warnings']), "No warnings")

@@ -3,7 +3,10 @@ import os
 __author__ = 'aoverton'
 
 __all__ = []
-files = os.listdir(os.path.dirname(__file__))
-file_list = filter(lambda x: x.endswith("Trans.py"), files)
-__all__ += map(lambda x: x[:-3], file_list)
+for file_name in os.listdir(os.path.dirname(__file__)):
+    if file_name.endswith("Trans.py"):  # all transformation checks must end with Trans.py
+        short_file_name = file_name[:-3]  # removes .py
+        __all__.append(short_file_name)
 class_list_trans = __all__
+
+

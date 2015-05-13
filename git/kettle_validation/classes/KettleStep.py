@@ -15,11 +15,12 @@ class KettleStep:
     WARNINGS = "warnings"
     ERRORS = "errors"
     NOTIFICATION = "notifications"
+    step_name = None
 
-    def __init__(self):
+    def __init__(self, all_steps):
         """
         Initialize necessary structures
-
+        :param all_steps: list of steps to check
         :return: None
         """
         self.issues = {self.WARNINGS: [],
@@ -27,7 +28,10 @@ class KettleStep:
                        self.NOTIFICATION: []}
         self.Issue = namedtuple('Issue', 'step_name message')
         self.issue_messages = IssueMessages()
-        self.all_steps = []
+        self.all_steps = all_steps
+
+    def run_tests(self):
+        raise NotImplementedError("run_tests method must be overridden")
 
     def add_issue(self, issue_type, kv_pair):
         """

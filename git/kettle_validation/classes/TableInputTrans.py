@@ -8,15 +8,8 @@ class TableInput(KettleStep):
     Models the TableInput step. Relies heavily on members created in parent class
 
     """
-    def __init__(self, data):
-        """
-        Call parent init and select relevant steps
 
-        :param data: dict of step names and corresponding list of steps from trans/job
-        :return: None
-        """
-        KettleStep.__init__(self)
-        self.all_steps = data['steps']['TableInput']
+    step_name = 'TableInput'
 
     def select_star(self):
         """

@@ -9,15 +9,7 @@ class TextFileInput(KettleStep):
 
     """
 
-    def __init__(self, data):
-        """
-        Call parent init and select relevant steps
-
-        :param data: dict of step names and corresponding list of steps from trans/job
-        :return: None
-        """
-        KettleStep.__init__(self)
-        self.all_steps = data['steps']['TextFileInput']
+    step_name = 'TextFileInput'
 
     def run_tests(self):
         """

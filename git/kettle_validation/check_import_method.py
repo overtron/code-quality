@@ -57,14 +57,13 @@ class ImportMethodChecker():
         """
         Run tests and collect results on use of data logistics
 
-        :param data: dictionary where keys are step types and values are a list of those step types from the
-        transformation
+        :param data: dict where top level keys are categories of data parsed from transformation/job
         :return: None
         """
         results = []
         append = lambda x, y: results.append(self.Response(x, y))
         for test_class in self.class_list_dl:
-            t = eval("{}.{}(data)".format(test_class, test_class[:-3]))
+            t = eval("{0}.{1}(data['steps'].get({0}.{1}.step_name, []))".format(test_class, test_class[:-3]))
             report = t.run_tests()
             append(test_class, report)
             for response in report[KS.NOTIFICATION]:
@@ -76,14 +75,13 @@ class ImportMethodChecker():
         """
         Run tests and collect results on use of PAPI imports
 
-        :param data: dictionary where keys are step types and values are a list of those step types from the
-        transformation
+        :param data: dict where top level keys are categories of data parsed from transformation/job
         :return: None
         """
         results = []
         append = lambda x, y: results.append(self.Response(x, y))
         for test_class in self.class_list_import:
-            t = eval("{}.{}(data)".format(test_class, test_class[:-5]))
+            t = eval("{0}.{1}(data['steps'].get({0}.{1}.step_name, []))".format(test_class, test_class[:-5]))
             report = t.run_tests()
             append(test_class, report)
             for response in report[KS.NOTIFICATION]:

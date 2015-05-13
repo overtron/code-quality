@@ -31,7 +31,7 @@ class MyTestCase(unittest.TestCase):
         self.data = ParseKettleXml(self.data, isFile=False).parse_xml()
 
     def test_run_tests(self):
-        t = ExcelInput(self.data)
+        t = ExcelInput(self.data['steps'][ExcelInput.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(1, len(result['warnings']), "Required File")

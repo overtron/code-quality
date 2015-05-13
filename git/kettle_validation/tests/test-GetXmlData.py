@@ -30,6 +30,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_run_tests(self):
         t = GetXmlData(self.data)
+        t = GetXmlData(self.data['steps'][GetXmlData.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(3, len(result['warnings']), "Required File, Ignore Empty File, Ignore Missing File")

@@ -25,6 +25,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_run_tests(self):
         t = TextFileOutput(self.data)
+        t = TextFileOutput(self.data['steps'][TextFileOutput.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(0, len(result['warnings']), "No warnings should be returned")

@@ -9,15 +9,7 @@ class JsonInput(KettleStep):
 
     """
 
-    def __init__(self, data):
-        """
-        Call parent init and select relevant steps
-
-        :param data: dict of step names and corresponding list of steps from trans/job
-        :return: None
-        """
-        KettleStep.__init__(self)
-        self.all_steps = data['steps']['JsonInput']
+    step_name = 'JsonInput'
 
     def run_tests(self):
         """

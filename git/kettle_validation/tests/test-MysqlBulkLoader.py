@@ -24,7 +24,7 @@ class MyTestCase(unittest.TestCase):
         self.data = ParseKettleXml(self.data, isFile=False).parse_xml()
 
     def test_run_tests(self):
-        t = MysqlBulkLoader(self.data)
+        t = MysqlBulkLoader(self.data['steps'][MysqlBulkLoader.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(1, len(result['warnings']), "Existence")

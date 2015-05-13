@@ -9,15 +9,17 @@ class GeneralTransformation(KettleStep):
 
     """
 
-    def __init__(self, data):
+    def __init__(self, all_hops, all_error_handling):
         """
-        Call parent init and select relevant steps
+        Calls parent init and stores special data members needed for these checks
 
-        :param data: dict of step names and corresponding list of steps from trans/job
+        :param all_hops: list of all hops in transformation
+        :param all_error_handling: list of all error handling in transformation
         :return: None
         """
-        KettleStep.__init__(self)
-        self.data = data
+        KettleStep.__init__(self, [])
+        self.all_hops = all_hops
+        self.all_error_handling = all_error_handling
 
     def add_hops(self, hops, issue_t, message):
         """
@@ -41,7 +43,7 @@ class GeneralTransformation(KettleStep):
         :return: None
         """
         disabled_hops = []
-        for hop in self.data['hops']:
+        for hop in self.all_hops:
             if hop.find("enabled").text.lower() == "y":
                 disabled_hops.append(hop)
         self.add_hops(disabled_hops, self.ERRORS, self.issue_messages.disabled_hops)
@@ -65,7 +67,7 @@ class GeneralTransformation(KettleStep):
         :return: None
         """
         hidden_error_handlers = []
-        for handler in self.data['error_handling']:
+        for handler in self.all_error_handling:
             if handler.find("is_enabled").text.lower() == "y" and handler.find("target_step").text in ["", None]:
                 hidden_error_handlers.append(handler)
         self.add_handlers(hidden_error_handlers, self.ERRORS, self.issue_messages.hidden_error_handlers)

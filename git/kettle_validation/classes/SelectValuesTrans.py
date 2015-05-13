@@ -9,15 +9,7 @@ class SelectValues(KettleStep):
 
     """
 
-    def __init__(self, data):
-        """
-        Call parent init and select relevant steps
-
-        :param data: dict of step names and corresponding list of steps from trans/job
-        :return: None
-        """
-        KettleStep.__init__(self)
-        self.all_steps = data['steps']['SelectValues']
+    step_name = 'SelectValues'
 
     def is_multiple_tabs(self, step):
         """

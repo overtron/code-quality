@@ -34,7 +34,7 @@ class MyTestCase(unittest.TestCase):
         </job>
         '''
         data = ParseKettleXml(data, isFile=False).parse_xml()
-        t = Shell(data)
+        t = Shell(data['steps'][Shell.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(self.messages.data_logistics, result['notifications'][0].message, "Data Logistics used")
@@ -62,7 +62,7 @@ class MyTestCase(unittest.TestCase):
         </job>
         '''
         data = ParseKettleXml(data, isFile=False).parse_xml()
-        t = Shell(data)
+        t = Shell(data['steps'][Shell.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(self.messages.external_script, result['notifications'][0].message, "Data Logistics Possible")
@@ -87,7 +87,7 @@ class MyTestCase(unittest.TestCase):
         </job>
         '''
         data = ParseKettleXml(data, isFile=False).parse_xml()
-        t = Shell(data)
+        t = Shell(data['steps'][Shell.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(self.messages.data_logistics, result['notifications'][0].message, "Table Copy")
@@ -111,7 +111,7 @@ class MyTestCase(unittest.TestCase):
         </job>
         '''
         data = ParseKettleXml(data, isFile=False).parse_xml()
-        t = Shell(data)
+        t = Shell(data['steps'][Shell.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(self.messages.deprecated_dl, result['notifications'][0].message, "etl2prod")
@@ -135,7 +135,7 @@ class MyTestCase(unittest.TestCase):
         </job>
         '''
         data = ParseKettleXml(data, isFile=False).parse_xml()
-        t = Shell(data)
+        t = Shell(data['steps'][Shell.step_name])
         result = t.run_tests()
         pretty_print(result)
         self.assertEqual(self.messages.deprecated_dl, result['notifications'][0].message, "prod2etl")
